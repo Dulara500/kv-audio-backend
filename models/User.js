@@ -31,6 +31,10 @@ const userSchema = new mongoose.Schema({
     phone:{
         type : String,
         required : true
+    },
+    whatsapp:{
+        type : String,
+        required : true
     }
 })
 const User = mongoose.model("User",userSchema);
