@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import userRouter from "./routes/userRoute.js";
 import productRoute from "./routes/productRoute.js";
+import reviewRoute from "./routes/reviewRoute.js";
 import jwt, { decode } from "jsonwebtoken";
 import dotenv from "dotenv";
 
@@ -38,7 +39,11 @@ app.use((req,res,next)=>{
 
 app.use("/api/users",userRouter);
 app.use("/api/product",productRoute);
+app.use("/api/review",reviewRoute);
 
+//"email": "alice.smith@example.com","password": "123"
+//"email": "dulara.smith@example.com","password": "123"
+//"email": "carol.doe@example.com","password" : "hashedpassword789" - admin
 app.listen(3000,()=>{
     console.log("server is running on port 3000");
 });

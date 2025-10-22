@@ -31,6 +31,11 @@ const userSchema = new mongoose.Schema({
     phone:{
         type : String,
         required : true
+    },
+    profilePic:{
+        type : String,
+        required : true,
+        default : "https://i.pinimg.com/originals/0f/69/1c/0f691cd77a8c6d90f07b35c10c95668f.jpg"
     }
     
 })

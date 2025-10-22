@@ -2,7 +2,7 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-
+dotenv.config();
 
 export function registerUser(req,res){
     const data = req.body
@@ -39,7 +39,9 @@ export function loginuser(req,res){
                 const token = jwt.sign({
                     firstName : user.firstName,
                     lastName : user.lastName,
-                    email : user.email
+                    email : user.email,
+                    role : user.role,
+                    profilePic : user.profilePic
                 },process.env.JWT_SECRETKEY)
                 res.json({
                     message : "login succressfull",
