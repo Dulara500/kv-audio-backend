@@ -26,7 +26,7 @@ app.use((req,res,next)=>{
     
     if(token!=null){
         token = token.replace("Bearer ","");
-        jwt.verify(token,"hi123",(err,decoded)=>{
+        jwt.verify(token,process.env.JWT_SECRETKEY,(err,decoded)=>{
             if(!err){
                 req.user = decoded;
             }
