@@ -37,7 +37,7 @@ const ReviewSchema = new mongoose.Schema({
     isApproved : {
         type : Boolean,
         required : true,
-        default : true
+        default : false
     }
 
 });
