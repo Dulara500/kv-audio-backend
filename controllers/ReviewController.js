@@ -1,3 +1,4 @@
+import { response } from "express";
 import Review from "../models/Review.js";
 
 export function addReview(req,res){
@@ -28,85 +29,89 @@ export function addReview(req,res){
 
 }
 
-export function getReview(req,res){
-    const user = req.user;
-    if(user == null || user.role != "admin"){
-        Review.find({isApproved:true}).then((reviews)=>{
+export async function getReview(req,res){
+    try{
+        const user = req.user;
+        if(user == null || user.role != "admin"){
+        
+            const reviews = await Review.find({isApproved:true})
             res.json(reviews)
-        })
-        return
-    }
-
-    if(user.role == "admin"){
-        Review.find().then((reviews)=>{
-            res.json(reviews);
-        })
-    }
+            return
+        }
+        const reviews = await Review.find()
+        res.json(reviews);
+    }catch(e){
+        res.json(e)
+    }      
 }
 
-export function deleteReview(req,res){
-    const email = req.params.email;
-    if(req.user == null){
-        res.json({
-            message : "please login try again"
-        });
-        return 
-    }
+export async function deleteReview(req,res){
+    try{
+        const email = req.params.email;
+        if(req.user == null){
+            res.json({
+                message : "please login try again"
+            });
+            return 
+        }
 
-    if(req.user.role == "admin"){
-        Review.deleteOne({email:email}).then(()=>{
+        if(req.user.role == "admin"){
+        
+            await Review.deleteOne({email:email})
             res.json({
                 message : "review deleted successfully"
             })
-        }).catch(()=>{
-            res.status(500).json({
-                error : "review deletion failed"
-            })
-        });
-        return 
-    }
-    if(req.user.role == "customer"){
-        if(req.user.email == email){
-            Review.deleteOne({email:email}).then(()=>{
+            
+            return 
+        }
+
+        if(req.user.role == "customer"){
+            if(req.user.email == email){
+                
+                await Review.deleteOne({email:email})
                 res.json({
                     message : "review deleted successfully"
                 })
-            }).catch(()=>{
-                res.status(500).json({
-                    rror : "review deletion failed"
+                return 
+            }else{
+                res.status(403).json({
+                    message : "you are not authorized to perform this action"
                 })
-            });
-            return 
-        }else{
-            res.status(403).json({
-                message : "you are not authorized to perform this action"
-            })
+            }
         }
-    }   
+    }catch(e){
+        console.error(e)
+        res.status(500).json({
+            error : "review deletion failed "+e
+        })
+    }    
 }
 
-export function updateReviews(req,res){
-    const email = req.params.email;
-    if(req.user == null){
-        res.json({
-            message : "please login try again later"
-        })
-        return 
-    }
+export async function updateReviews(req,res){
+    try{
+        const email = req.params.email;
+        if(req.user == null){
+            res.json({
+                message : "please login try again later"
+            })
+            return 
+        }
 
-    if(req.user.role == "admin"){
-        Review.updateOne({email:email},{isApproved:true}).then(()=>{
-            res.json({
-                message : "review approved successfully"
+        if(req.user.role == "admin"){
+            await Review.updateOne({email:email},{isApproved:true})
+                res.json({
+                    message : "review approved successfully"
+                })
+        }else{
+            res.status(403).json({
+                message : "only admins can approve reviews"
             })
-        }).catch(()=>{
-            res.json({
-                message : "review approvel failed"
-            })
+        }
+    }catch(e){
+        res.json({
+            message : "review approvel failed "
         })
-    }else{
-        res.status(403).json({
-            message : "only admins can approve reviews"
-        })
+        console.error(e)
     }
+    
 }
